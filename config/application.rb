@@ -33,5 +33,9 @@ module TestApp
 
     # Don't generate system test files.
     config.generators.system_tests = nil
+
+    config.generators do |g| # ここから追記
+      g.assets false          # CSS, JavaScriptファイルを自動生成しない
+      g.helper     false      # helperファイルを自動生成しない
   end
 end
