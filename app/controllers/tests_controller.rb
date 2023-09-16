@@ -1,5 +1,5 @@
 class TestsController < ApplicationController
-  before_action :set_test, only: %i[ show edit update destroy ]
+  before_action :set_test, only: %i[show edit update destroy]
 
   # GET /tests
   def index
@@ -24,7 +24,7 @@ class TestsController < ApplicationController
     @test = Test.new(test_params)
 
     if @test.save
-      redirect_to @test, notice: "Test was successfully created."
+      redirect_to @test, notice: 'Test was successfully created.'
     else
       render :new, status: :unprocessable_entity
     end
@@ -33,7 +33,7 @@ class TestsController < ApplicationController
   # PATCH/PUT /tests/1
   def update
     if @test.update(test_params)
-      redirect_to @test, notice: "Test was successfully updated.", status: :see_other
+      redirect_to @test, notice: 'Test was successfully updated.', status: :see_other
     else
       render :edit, status: :unprocessable_entity
     end
@@ -42,17 +42,18 @@ class TestsController < ApplicationController
   # DELETE /tests/1
   def destroy
     @test.destroy
-    redirect_to tests_url, notice: "Test was successfully destroyed.", status: :see_other
+    redirect_to tests_url, notice: 'Test was successfully destroyed.', status: :see_other
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_test
-      @test = Test.find(params[:id])
-    end
 
-    # Only allow a list of trusted parameters through.
-    def test_params
-      params.require(:test).permit(:title, :body)
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_test
+    @test = Test.find(params[:id])
+  end
+
+  # Only allow a list of trusted parameters through.
+  def test_params
+    params.require(:test).permit(:title, :body)
+  end
 end
