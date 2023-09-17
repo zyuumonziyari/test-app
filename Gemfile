@@ -76,3 +76,5 @@ group :test do
   # Use system testing [https://guides.rubyonrails.org/testing.html#system-testing]
   gem 'capybara'
 end
+
+gem 'devise' # 追記
