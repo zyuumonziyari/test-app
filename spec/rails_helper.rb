@@ -61,5 +61,5 @@ RSpec.configure do |config|
   # arbitrary gems may also be filtered via:
   # config.filter_gems_from_backtrace("gem name")
 
-  config.include FactoryBot::Syntax::Methods # 最下段に追記
+  config.include FactoryBot::Syntax::Methods
 end
