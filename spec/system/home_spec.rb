@@ -1,11 +1,8 @@
 require 'rails_helper'
 
-RSpec.describe 'Homes', type: :system do
+RSpec.describe 'Homes' do
   before do # ここから追記
     driven_by :selenium_chrome_headless
-  end # ここまで追記
-  
-  before do
     driven_by(:rack_test)
   end
 
