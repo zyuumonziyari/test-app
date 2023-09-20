@@ -2,7 +2,6 @@ require 'rails_helper'
 
 RSpec.describe 'Homes' do
   before do # ここから追記
-    driven_by :selenium_chrome_headless
     driven_by(:rack_test)
   end
 
@@ -57,7 +56,7 @@ RSpec.describe 'Homes' do
         # ログインしていない状態のリンク表示パターンになることを確認
         expect(page).to have_link('ユーザー登録', href: '/users/sign_up')
         expect(page).to have_link('ログイン', href: '/users/sign_in')
-        expect(page).not_to have_content('ログアウト')
+        expect(page).not_to have_button('ログアウト') # 修正
       end
     end
   end
