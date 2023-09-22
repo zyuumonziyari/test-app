@@ -13,6 +13,36 @@ describe 'Post', type: :system do
   let(:title) { 'テストタイトル' }
   let(:content) { 'テスト本文' }
 
+  describe 'ナビゲーションバーの検証' do
+    context 'ログインしていない場合' do
+      before { visit '/' }
+
+      it 'ログ一覧リンクを表示する' do
+        expect(page).to have_link('ログ一覧', href: '/')
+      end
+
+      it 'ログ投稿リンクを表示しない' do
+        expect(page).not_to have_link('ログ投稿', href: '/posts/new')
+      end
+    end
+
+    context 'ログインしている場合' do
+      before do
+        user = create(:user) # ログイン用のユーザーを作成
+        sign_in user # 作成したユーザーでログイン
+        visit '/'
+      end
+
+      it 'ログ一覧リンクを表示する' do
+        expect(page).to have_link('ログ一覧', href: '/')
+      end
+
+      it 'ログ投稿リンクを表示する' do
+        expect(page).to have_link('ログ投稿', href: '/posts/new')
+      end
+    end
+  end
+  
   describe 'ログ投稿機能の検証' do
     # ログ投稿を行う一連の操作を subject にまとめる
     subject do
@@ -41,7 +71,7 @@ describe 'Post', type: :system do
       context 'パラメータが正常な場合' do
         it 'Postを作成できる' do
           expect { subject }.to change(Post, :count).by(1)
-          expect(current_path).to eq('/posts') # 修正
+          expect(current_path).to eq('/') # 修正
           expect(page).to have_content('投稿しました')
         end
       end
@@ -70,7 +100,7 @@ describe 'Post', type: :system do
   end
 
   describe 'ログ一覧機能の検証' do
-    before { visit '/posts' }
+    before { visit '/' }
 
     it '1件目のPostの詳細が表示される' do
       expect(page).to have_content('RSpec学習完了')
@@ -108,7 +138,7 @@ describe 'Post', type: :system do
         end.to change(Post, :count).by(-1) # 削除ボタンをクリックするとPostが1つ減る
 
         # リダイレクト後の画面確認
-        expect(current_path).to eq('/posts')
+        expect(current_path).to eq('/')
         expect(page).to have_content('投稿が削除されました') # フラッシュメッセージを表示
         expect(page).not_to have_link("/posts/#{@post.id}") # 削除した投稿(の詳細ページへのリンク)が存在しない
       end
