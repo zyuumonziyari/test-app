@@ -1,7 +1,11 @@
 require 'rails_helper'
 
 RSpec.describe 'Posts', type: :request do
-  before { @user = create(:user) } # 各テストで使用できるユーザーを作成
+  before do # beforeブロックを修正
+    @user = create(:user)
+    @post = create(:post) # 追加
+  end
+
 
   describe 'GET /posts/new' do
     context 'ログインしていない場合' do
