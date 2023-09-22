@@ -4,7 +4,7 @@ Rails.application.routes.draw do
   root "home#top"
   resources :tests
 
-  resources :posts, only: [:new, :create, :show, :index] # 追加
+  resources :posts, only: [:new, :create, :show, :index, :destroy] # 追加
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
