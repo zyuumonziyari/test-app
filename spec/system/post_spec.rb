@@ -2,11 +2,10 @@ require 'rails_helper'
 
 describe 'Post', type: :system do
   before do
-    driven_by :rack_test 
+    driven_by :rack_test
     @user = create(:user) # ログイン用ユーザー作成
     @post = create(:post, title: 'RSpec学習完了', content: 'System Specを作成した', user_id: @user.id) # 追加
     @post2 = create(:post, title: 'RSpec学習完了 2', content: 'System Specを作成した 2', user_id: @user.id) # 追加
-
   end
 
   # 投稿フォーム
@@ -42,7 +41,7 @@ describe 'Post', type: :system do
       end
     end
   end
-  
+
   describe 'ログ投稿機能の検証' do
     # ログ投稿を行う一連の操作を subject にまとめる
     subject do
@@ -53,8 +52,9 @@ describe 'Post', type: :system do
 
     context 'ログインしていない場合' do
       before { visit '/posts/new' }
+
       it 'ログインページへリダイレクトする' do
-        expect(current_path).to eq('/users/sign_in')
+        expect(page).to have_current_path('/users/sign_in')
         expect(page).to have_content('ログインしてください。')
       end
     end
@@ -64,24 +64,27 @@ describe 'Post', type: :system do
         sign_in @user
         visit '/posts/new'
       end
+
       it 'ログインページへリダイレクトしない' do
-        expect(current_path).not_to eq('/users/sign_in')
+        expect(page).not_to have_current_path('/users/sign_in')
       end
 
       context 'パラメータが正常な場合' do
         it 'Postを作成できる' do
           expect { subject }.to change(Post, :count).by(1)
-          expect(current_path).to eq('/') # 修正
+          expect(page).to have_current_path('/') # 修正
           expect(page).to have_content('投稿しました')
         end
       end
 
       context 'パラメータが異常な場合' do
         let(:title) { nil }
+
         it 'Postを作成できない' do
           expect { subject }.not_to change(Post, :count)
           expect(page).to have_content('投稿に失敗しました')
         end
+
         it '入力していた内容は維持される' do
           subject
           expect(page).to have_field('post_content', with: content)
@@ -89,6 +92,7 @@ describe 'Post', type: :system do
       end
     end
   end
+
   describe 'ログ詳細機能の検証' do
     before { visit "/posts/#{@post.id}" }
 
@@ -116,10 +120,9 @@ describe 'Post', type: :system do
 
     it '投稿タイトルをクリックすると詳細ページへ遷移する' do
       click_link 'RSpec学習完了'
-      expect(current_path).to eq("/posts/#{@post.id}")
+      expect(page).to have_current_path("/posts/#{@post.id}")
     end
   end
-
 
   describe 'ログ削除機能の検証' do
     context '投稿したユーザーでログインしている場合' do
@@ -138,7 +141,7 @@ describe 'Post', type: :system do
         end.to change(Post, :count).by(-1) # 削除ボタンをクリックするとPostが1つ減る
 
         # リダイレクト後の画面確認
-        expect(current_path).to eq('/')
+        expect(page).to have_current_path('/')
         expect(page).to have_content('投稿が削除されました') # フラッシュメッセージを表示
         expect(page).not_to have_link("/posts/#{@post.id}") # 削除した投稿(の詳細ページへのリンク)が存在しない
       end

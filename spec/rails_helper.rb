@@ -64,6 +64,4 @@ RSpec.configure do |config|
   config.include FactoryBot::Syntax::Methods
   config.include Devise::Test::IntegrationHelpers, type: :system # 追加
   config.include Devise::Test::IntegrationHelpers, type: :request # 追加
-
-
 end

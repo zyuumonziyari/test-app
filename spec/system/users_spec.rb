@@ -2,8 +2,6 @@ require 'rails_helper'
 
 describe 'User', type: :system do
   before { driven_by :rack_test }
-  
-
 
   # ユーザー情報入力用の変数
   let(:email) { 'test@example.com' }
@@ -59,8 +57,6 @@ describe 'User', type: :system do
   end
 
   describe 'ユーザー登録機能の検証' do
-    before { visit '/users/sign_up' }
-
     # ユーザー登録を行う一連の操作を subject にまとめる
     subject do
       fill_in 'user_nickname', with: nickname
@@ -70,17 +66,20 @@ describe 'User', type: :system do
       click_button 'ユーザー登録'
     end
 
+    before { visit '/users/sign_up' }
+
     context '正常系' do
       it 'ユーザーを作成できる' do
         expect { subject }.to change(User, :count).by(1) # Userが1つ増える
         expect(page).to have_content('ユーザー登録に成功しました。')
-        expect(current_path).to eq('/') # ユーザー登録後はトップページにリダイレクト
+        expect(page).to have_current_path('/') # ユーザー登録後はトップページにリダイレクト
       end
     end
 
     context '異常系' do
       context 'エラー理由が1件の場合' do
         let(:nickname) { '' }
+
         it 'ユーザー作成に失敗した旨のエラーメッセージを表示する' do
           subject
           expect(page).to have_content('エラーが発生したためユーザーは保存されませんでした。')
@@ -90,6 +89,7 @@ describe 'User', type: :system do
       context 'エラー理由が2件以上の場合' do
         let(:nickname) { '' }
         let(:email) { '' }
+
         it '問題件数とともに、ユーザー作成に失敗した旨のエラーメッセージを表示する' do
           subject
           expect(page).to have_content('エラーが発生したためユーザーは保存されませんでした。')
@@ -98,6 +98,7 @@ describe 'User', type: :system do
 
       context 'nicknameが空の場合' do
         let(:nickname) { '' }
+
         it 'ユーザーを作成せず、エラーメッセージを表示する' do
           expect { subject }.not_to change(User, :count) # Userが増えない
           expect(page).to have_content('ニックネーム が入力されていません。') # エラーメッセージのチェック
@@ -106,6 +107,7 @@ describe 'User', type: :system do
 
       context 'nicknameが20文字を超える場合' do
         let(:nickname) { 'あ' * 21 }
+
         it 'ユーザーを作成せず、エラーメッセージを表示する' do
           expect { subject }.not_to change(User, :count)
           expect(page).to have_content('ニックネーム は20文字以下に設定して下さい。')
@@ -114,6 +116,7 @@ describe 'User', type: :system do
 
       context 'emailが空の場合' do
         let(:email) { '' }
+
         it 'ユーザーを作成せず、エラーメッセージを表示する' do
           expect { subject }.not_to change(User, :count)
           expect(page).to have_content('メールアドレス が入力されていません。')
@@ -122,6 +125,7 @@ describe 'User', type: :system do
 
       context 'passwordが空の場合' do
         let(:password) { '' }
+
         it 'ユーザーを作成せず、エラーメッセージを表示する' do
           expect { subject }.not_to change(User, :count)
           expect(page).to have_content('パスワード が入力されていません。')
@@ -130,6 +134,7 @@ describe 'User', type: :system do
 
       context 'passwordが6文字未満の場合' do
         let(:password) { 'a' * 5 }
+
         it 'ユーザーを作成せず、エラーメッセージを表示する' do
           expect { subject }.not_to change(User, :count)
           expect(page).to have_content('パスワード は6文字以上に設定して下さい。')
@@ -138,6 +143,7 @@ describe 'User', type: :system do
 
       context 'passwordが128文字を超える場合' do
         let(:password) { 'a' * 129 }
+
         it 'ユーザーを作成せず、エラーメッセージを表示する' do
           expect { subject }.not_to change(User, :count)
           expect(page).to have_content('パスワード は128文字以下に設定して下さい。')
@@ -146,6 +152,7 @@ describe 'User', type: :system do
 
       context 'passwordとpassword_confirmationが一致しない場合' do
         let(:password_confirmation) { "#{password}hoge" } # passwordに"hoge"を足した文字列にする
+
         it 'ユーザーを作成せず、エラーメッセージを表示する' do
           expect { subject }.not_to change(User, :count)
           expect(page).to have_content('確認用パスワード が一致していません。')
@@ -156,7 +163,7 @@ describe 'User', type: :system do
 
   describe 'ログイン機能の検証' do
     before do
-      create(:user, nickname: nickname, email: email, password: password, password_confirmation: password) # ユーザー作成
+      create(:user, nickname:, email:, password:, password_confirmation: password) # ユーザー作成
 
       visit '/users/sign_in'
       fill_in 'user_email', with: email
@@ -166,7 +173,7 @@ describe 'User', type: :system do
 
     context '正常系' do
       it 'ログインに成功し、トップページにリダイレクトする' do
-        expect(current_path).to eq('/')
+        expect(page).to have_current_path('/')
       end
 
       it 'ログイン成功時のフラッシュメッセージを表示する' do
@@ -176,8 +183,9 @@ describe 'User', type: :system do
 
     context '異常系' do
       let(:password) { 'NGpassword' }
+
       it 'ログインに失敗し、ページ遷移しない' do
-        expect(current_path).to eq('/users/sign_in')
+        expect(page).to have_current_path('/users/sign_in')
       end
 
       it 'ログイン失敗時のフラッシュメッセージを表示する' do
@@ -188,14 +196,14 @@ describe 'User', type: :system do
 
   describe 'ログアウト機能の検証' do
     before do
-      user = create(:user, nickname: nickname, email: email, password: password, password_confirmation: password) # ユーザー作成
+      user = create(:user, nickname:, email:, password:, password_confirmation: password) # ユーザー作成
       sign_in user # 作成したユーザーでログイン
       visit '/'
       click_button 'ログアウト'
     end
 
     it 'トップページにリダイレクトする' do
-      expect(current_path).to eq('/')
+      expect(page).to have_current_path('/')
     end
 
     it 'ログアウト時のフラッシュメッセージを表示する' do

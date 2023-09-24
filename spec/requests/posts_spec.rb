@@ -6,12 +6,11 @@ RSpec.describe 'Posts', type: :request do
     @post = create(:post) # 追加
   end
 
-
   describe 'GET /posts/new' do
     context 'ログインしていない場合' do
       it 'HTTPステータス302を返す' do
         get '/posts/new'
-        expect(response).to have_http_status(302)
+        expect(response).to have_http_status(:found)
       end
 
       it 'ログインページにリダイレクトされる' do
@@ -22,9 +21,10 @@ RSpec.describe 'Posts', type: :request do
 
     context 'ログインしている場合' do
       before { sign_in @user }
+
       it 'HTTPステータス200を返す' do
         get '/posts/new'
-        expect(response).to have_http_status(200)
+        expect(response).to have_http_status(:ok)
       end
 
       it 'ログインページにリダイレクトされない' do
@@ -38,14 +38,15 @@ RSpec.describe 'Posts', type: :request do
     context 'ログインしていない場合' do
       it 'HTTPステータス200を返す' do
         get "/posts/#{@post.id}"
-        expect(response).to have_http_status '200'
+        expect(response).to have_http_status nil
       end
     end
+
     context 'ログインしている場合' do
       it 'HTTPステータス200を返す' do
         sign_in @user
         get "/posts/#{@post.id}"
-        expect(response).to have_http_status '200'
+        expect(response).to have_http_status nil
       end
     end
   end
@@ -54,14 +55,15 @@ RSpec.describe 'Posts', type: :request do
     context 'ログインしていない場合' do
       it 'HTTPステータス200を返す' do
         get '/'
-        expect(response).to have_http_status '200'
+        expect(response).to have_http_status nil
       end
     end
+
     context 'ログインしている場合' do
       it 'HTTPステータス200を返す' do
         sign_in @user
         get '/'
-        expect(response).to have_http_status '200'
+        expect(response).to have_http_status nil
       end
     end
   end
